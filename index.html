@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f2eb">
+  <meta name="description" content="Discover practical ways Claude can help professionals work smarter across every industry.">
+  <title>Claude for Every Role | myUI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f8f2eb;
+      --ink: #20201e;
+      --muted: #5b5853;
+      --card: rgba(255, 253, 249, .88);
+      --line: #e9e0d6;
+      --terracotta: #c8795d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 8% 12%, rgba(255,255,255,.75), transparent 42%),
+        radial-gradient(ellipse at 90% 85%, rgba(233,214,195,.35), transparent 35%),
+        var(--paper);
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .page {
+      width: min(1160px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: clamp(44px, 7vw, 88px) 0 64px;
+      position: relative;
+      isolation: isolate;
+    }
+    .accent {
+      position: absolute;
+      z-index: -1;
+      top: -30px;
+      right: 7%;
+      width: 34px;
+      height: 100px;
+      background: linear-gradient(180deg, #d88a6b, #c77558);
+      border-radius: 0 0 24px 24px;
+      transform: rotate(17deg);
+      opacity: .88;
+    }
+    .intro { text-align: center; max-width: 660px; margin: 0 auto 38px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: #8c5c48; text-transform: uppercase; letter-spacing: .16em;
+      font-size: 11px; font-weight: 600; margin-bottom: 15px;
+    }
+    .eyebrow::before, .eyebrow::after { content: ""; width: 20px; height: 1px; background: #c99a84; }
+    h1 {
+      margin: 0;
+      font: 700 clamp(30px, 4.4vw, 48px)/1.12 "Playfair Display", Georgia, serif;
+      letter-spacing: -.035em;
+    }
+    .subtitle { color: var(--muted); margin: 15px auto 0; font-size: 15px; line-height: 1.7; max-width: 490px; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .card {
+      min-height: 315px;
+      padding: 27px 22px 25px;
+      display: flex; align-items: center; flex-direction: column; text-align: center;
+      background: var(--card);
+      border: 1px solid rgba(225, 215, 203, .86);
+      border-radius: 25px;
+      box-shadow: 0 8px 24px rgba(75, 57, 40, .055), 0 2px 5px rgba(75, 57, 40, .035);
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 15px 32px rgba(75,57,40,.10); border-color: #d9c8b8; }
+    .icon-wrap {
+      width: 94px; height: 94px; flex: 0 0 auto; border-radius: 50%;
+      display: grid; place-items: center; margin-bottom: 19px;
+    }
+    .icon-wrap svg { width: 43px; height: 43px; stroke-width: 1.65; }
+    .sage { background: #e4e9dc; color: #24382e; }
+    .lavender { background: #eae5ef; color: #292536; }
+    .blue { background: #e1e8ef; color: #263f55; }
+    .mint { background: #e1ede8; color: #263e39; }
+    .peach { background: #f7dfd3; color: #a65e45; }
+    .gold { background: #f5e8c9; color: #8c6a24; }
+    h2 {
+      margin: 0;
+      font: 700 clamp(20px, 2.1vw, 27px)/1.2 "Playfair Display", Georgia, serif;
+      letter-spacing: -.025em;
+    }
+    .rule { width: 52px; height: 2px; margin: 19px 0 18px; background: #343530; border-radius: 4px; }
+    .card:nth-child(4) .rule, .card:nth-child(7) .rule { background: #45635a; }
+    .card:nth-child(5) .rule { background: #bd765d; }
+    .card:nth-child(6) .rule { background: #a38a4b; }
+    p.description { max-width: 270px; margin: 0; color: #373632; font-size: 15.5px; line-height: 1.65; }
+    footer { text-align: center; color: #81786e; font-size: 12px; margin-top: 27px; }
+    @media (max-width: 760px) {
+      .page { width: min(100% - 30px, 560px); padding-top: 52px; }
+      .accent { right: 7%; width: 23px; height: 70px; top: -18px; }
+      .intro { margin-bottom: 27px; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .card { min-height: 290px; padding: 23px 15px; border-radius: 21px; }
+      .icon-wrap { width: 78px; height: 78px; margin-bottom: 16px; }
+      .icon-wrap svg { width: 36px; height: 36px; }
+      h2 { font-size: clamp(18px, 4vw, 23px); }
+      .rule { margin: 16px 0; }
+      p.description { font-size: 14px; line-height: 1.6; }
+    }
+    @media (max-width: 420px) {
+      .grid { grid-template-columns: 1fr; gap: 14px; }
+      .card { min-height: auto; padding: 25px 22px 27px; }
+      .icon-wrap { width: 82px; height: 82px; }
+      h2 { font-size: 25px; }
+      p.description { max-width: 290px; font-size: 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <span class="accent" aria-hidden="true"></span>
+    <header class="intro">
+      <div class="eyebrow">One assistant, many possibilities</div>
+      <h1>Claude for every role</h1>
+      <p class="subtitle">Thoughtful tools for the work you do every day, whatever your role or industry.</p>
+    </header>
+    <section class="grid" aria-label="Ways Claude can help different professions">
+      <article class="card">
+        <div class="icon-wrap sage"><i data-lucide="calculator" aria-hidden="true"></i></div>
+        <h2>Accountants</h2><span class="rule" aria-hidden="true"></span>
+        <p class="description">Automate reports, analyze data, and ensure compliance with Claude.</p>
+      </article>
+      <article class="card">
+        <div class="icon-wrap lavender"><i data-lucide="users-round" aria-hidden="true"></i></div>
+        <h2>HR Professionals</h2><span class="rule" aria-hidden="true"></span>
+        <p class="description">Streamline hiring, create policies, and improve employee experience.</p>
+      </article>
+      <article class="card">
+        <div class="icon-wrap blue"><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i></div>
+        <h2>Sales Managers</h2><span class="rule" aria-hidden="true"></span>
+        <p class="description">Boost sales with better insights, smart follow-ups, and team enablement.</p>
+      </article>
+      <article class="card">
+        <div class="icon-wrap mint"><i data-lucide="briefcase-business" aria-hidden="true"></i></div>
+        <h2>Office Managers</h2><span class="rule" aria-hidden="true"></span>
+        <p class="description">Organize tasks, manage schedules, and optimize daily operations.</p>
+      </article>
+      <article class="card">
+        <div class="icon-wrap peach"><i data-lucide="pen-tool" aria-hidden="true"></i></div>
+        <h2>Designers</h2><span class="rule" aria-hidden="true"></span>
+        <p class="description">Generate ideas, create content, and speed up your creative process.</p>
+      </article>
+      <article class="card">
+        <div class="icon-wrap gold"><i data-lucide="circle-dollar-sign" aria-hidden="true"></i></div>
+        <h2>Financiers</h2><span class="rule" aria-hidden="true"></span>
+        <p class="description">Model scenarios, assess risk, and make data-driven decisions faster.</p>
+      </article>
+      <article class="card">
+        <div class="icon-wrap blue"><i data-lucide="book-open" aria-hidden="true"></i></div>
+        <h2>Teachers</h2><span class="rule" aria-hidden="true"></span>
+        <p class="description">Create lesson plans, explain concepts, and engage every student.</p>
+      </article>
+      <article class="card">
+        <div class="icon-wrap lavender"><i data-lucide="user-round" aria-hidden="true"></i></div>
+        <h2>Consultants</h2><span class="rule" aria-hidden="true"></span>
+        <p class="description">Unlock Claude's potential for your unique role and industry.</p>
+      </article>
+      <article class="card">
+        <div class="icon-wrap sage"><i data-lucide="house" aria-hidden="true"></i></div>
+        <h2>Real Estate Agents</h2><span class="rule" aria-hidden="true"></span>
+        <p class="description">Learn once. Apply everywhere. Grow with Claude.</p>
+      </article>
+    </section>
+    <footer>Designed with care · myUI</footer>
+  </main>
+  <script>if (window.lucide) window.lucide.createIcons();</script>
+</body>
+</html>
