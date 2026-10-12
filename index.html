@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@0.468.0"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
     :root {
       color-scheme: light;
@@ -181,6 +182,28 @@
     </section>
     <footer>Dirancang dengan cermat · Cream</footer>
   </main>
-  <script>if (window.lucide) window.lucide.createIcons();</script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+    (async function loadProfessionSettings(){
+      try {
+        if (!window.supabase) return;
+        const client = window.supabase.createClient("https://iavnrurnfgdhmfuticyv.supabase.co","sb_publishable_6slueVLEm5z2mHtbw3fr-w_43hqFNDQ");
+        const {data,error}=await client.from("profession_settings").select("slug,title,description,active,sort_order").eq("active",true).order("sort_order");
+        if(error || !Array.isArray(data) || !data.length) return;
+        const grid=document.querySelector(".grid");
+        const cards=new Map(Array.from(grid.querySelectorAll(".card")).map(card=>[new URL(card.href).searchParams.get("role"),card]));
+        for(const card of cards.values()) card.remove();
+        data.forEach(item=>{
+          const card=cards.get(item.slug);
+          if(!card) return;
+          const heading=card.querySelector("h2"),description=card.querySelector(".description");
+          if(heading) heading.textContent=item.title;
+          if(description) description.textContent=item.description;
+          card.style.order=String(item.sort_order||0);
+          grid.appendChild(card);
+        });
+      } catch(e) { console.warn("Pengaturan profesi Cream memakai konfigurasi bawaan.",e); }
+    })();
+  </script>
 </body>
 </html>
