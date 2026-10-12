@@ -23,13 +23,26 @@
 const SUPABASE_URL="https://iavnrurnfgdhmfuticyv.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_6slueVLEm5z2mHtbw3fr-w_43hqFNDQ";
 const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-const $=id=>document.getElementById(id);let rows=[],currentUser=null;
+const $=id=>document.getElementById(id);let rows=[],currentUser=null,idleTimer=null;
+const ADMIN_IDLE_LIMIT=20*60*1000;
+function clearAdminIdle(){if(idleTimer!==null)clearTimeout(idleTimer);idleTimer=null}
+function resetAdminIdle(){
+  if(!currentUser)return;
+  clearAdminIdle();
+  idleTimer=setTimeout(async()=>{
+    currentUser=null;
+    await client.auth.signOut();
+    showLogin();
+    setLoginError("Sesi admin berakhir setelah 20 menit tidak aktif. Silakan masuk kembali.");
+  },ADMIN_IDLE_LIMIT);
+}
+["pointerdown","keydown","touchstart","scroll"].forEach(eventName=>window.addEventListener(eventName,resetAdminIdle,{passive:true}));
 function toast(s){const el=$("toast");el.textContent=s;el.classList.remove("hidden");setTimeout(()=>el.classList.add("hidden"),3000)}
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function icons(){if(window.lucide)window.lucide.createIcons()}
 function setLoginError(s){$("login-error").textContent=s}
-async function requireAdmin(){const {data:{session}}=await client.auth.getSession();currentUser=session?.user||null;if(!currentUser){showLogin();return false}const {data,error}=await client.from("cream_admins").select("user_id").eq("user_id",currentUser.id).maybeSingle();if(error||!data){await client.auth.signOut();showLogin();setLoginError(error?"Gagal memeriksa akses admin. Pastikan SQL Supabase sudah dijalankan.":"Akun ini belum terdaftar sebagai admin Cream.");return false} $("login-view").classList.add("hidden");$("admin-view").classList.remove("hidden");$("logout").classList.remove("hidden");await loadRoles();return true}
-function showLogin(){$("login-view").classList.remove("hidden");$("admin-view").classList.add("hidden");$("logout").classList.add("hidden")}
+async function requireAdmin(){const {data:{session}}=await client.auth.getSession();currentUser=session?.user||null;if(!currentUser){showLogin();return false}const {data,error}=await client.from("cream_admins").select("user_id").eq("user_id",currentUser.id).maybeSingle();if(error||!data){await client.auth.signOut();showLogin();setLoginError(error?"Gagal memeriksa akses admin. Pastikan SQL Supabase sudah dijalankan.":"Akun ini belum terdaftar sebagai admin Cream.");return false} $("login-view").classList.add("hidden");$("admin-view").classList.remove("hidden");$("logout").classList.remove("hidden");resetAdminIdle();await loadRoles();return true}
+function showLogin(){clearAdminIdle();currentUser=null;$("login-view").classList.remove("hidden");$("admin-view").classList.add("hidden");$("logout").classList.add("hidden")}
 $("login-form").addEventListener("submit",async e=>{e.preventDefault();setLoginError("");const {error}=await client.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error){setLoginError("Gagal masuk: "+error.message);return}await requireAdmin()});
 $("logout").addEventListener("click",async()=>{await client.auth.signOut();showLogin();toast("Kamu sudah keluar.")});
 $("reload").addEventListener("click",()=>loadRoles().catch(e=>toast("Gagal memuat: "+e.message)));
