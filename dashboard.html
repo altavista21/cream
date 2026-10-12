@@ -73,6 +73,7 @@ async function initFromSupabase(){
       const client=window.supabase.createClient("https://iavnrurnfgdhmfuticyv.supabase.co","sb_publishable_6slueVLEm5z2mHtbw3fr-w_43hqFNDQ");
       const {data,error}=await client.from("profession_settings").select("title,active,dashboard_config").eq("slug",role).maybeSingle();
       if(!error&&data)settings=data;
+      else if(!error&&!data)settings={active:false};
       else if(error)console.warn("Pengaturan dashboard memakai konfigurasi bawaan.",error.message);
     }
   }catch(error){console.warn("Pengaturan dashboard memakai konfigurasi bawaan.",error);}
