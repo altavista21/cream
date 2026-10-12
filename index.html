@@ -66,6 +66,7 @@
     .subtitle { color: var(--muted); margin: 15px auto 0; font-size: 15px; line-height: 1.7; max-width: 490px; }
     .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
     .card {
+      color: inherit; text-decoration: none; cursor: pointer;
       min-height: 315px;
       padding: 27px 22px 25px;
       display: flex; align-items: center; flex-direction: column; text-align: center;
@@ -75,6 +76,7 @@
       box-shadow: 0 8px 24px rgba(75, 57, 40, .055), 0 2px 5px rgba(75, 57, 40, .035);
       transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
     }
+    .card:focus-visible { outline: 3px solid #bd765d; outline-offset: 3px; }
     .card:hover { transform: translateY(-4px); box-shadow: 0 15px 32px rgba(75,57,40,.10); border-color: #d9c8b8; }
     .icon-wrap {
       width: 94px; height: 94px; flex: 0 0 auto; border-radius: 50%;
@@ -131,51 +133,51 @@
       <p class="subtitle">Thoughtful tools for the work you do every day, whatever your role or industry.</p>
     </header>
     <section class="grid" aria-label="Ways Cream can help different professions">
-      <article class="card">
+      <a class="card" href="dashboard.html?role=accountants">
         <div class="icon-wrap sage"><i data-lucide="calculator" aria-hidden="true"></i></div>
         <h2>Accountants</h2><span class="rule" aria-hidden="true"></span>
         <p class="description">Automate reports, analyze data, and ensure compliance with Cream.</p>
-      </article>
-      <article class="card">
+      </a>
+      <a class="card" href="dashboard.html?role=hr">
         <div class="icon-wrap lavender"><i data-lucide="users-round" aria-hidden="true"></i></div>
         <h2>HR Professionals</h2><span class="rule" aria-hidden="true"></span>
         <p class="description">Streamline hiring, create policies, and improve employee experience.</p>
-      </article>
-      <article class="card">
+      </a>
+      <a class="card" href="dashboard.html?role=sales">
         <div class="icon-wrap blue"><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i></div>
         <h2>Sales Managers</h2><span class="rule" aria-hidden="true"></span>
         <p class="description">Boost sales with better insights, smart follow-ups, and team enablement.</p>
-      </article>
-      <article class="card">
+      </a>
+      <a class="card" href="dashboard.html?role=office">
         <div class="icon-wrap mint"><i data-lucide="briefcase-business" aria-hidden="true"></i></div>
         <h2>Office Managers</h2><span class="rule" aria-hidden="true"></span>
         <p class="description">Organize tasks, manage schedules, and optimize daily operations.</p>
-      </article>
-      <article class="card">
+      </a>
+      <a class="card" href="dashboard.html?role=designers">
         <div class="icon-wrap peach"><i data-lucide="pen-tool" aria-hidden="true"></i></div>
         <h2>Designers</h2><span class="rule" aria-hidden="true"></span>
         <p class="description">Generate ideas, create content, and speed up your creative process.</p>
-      </article>
-      <article class="card">
+      </a>
+      <a class="card" href="dashboard.html?role=financiers">
         <div class="icon-wrap gold"><i data-lucide="circle-dollar-sign" aria-hidden="true"></i></div>
         <h2>Financiers</h2><span class="rule" aria-hidden="true"></span>
         <p class="description">Model scenarios, assess risk, and make data-driven decisions faster.</p>
-      </article>
-      <article class="card">
+      </a>
+      <a class="card" href="dashboard.html?role=teachers">
         <div class="icon-wrap blue"><i data-lucide="book-open" aria-hidden="true"></i></div>
         <h2>Teachers</h2><span class="rule" aria-hidden="true"></span>
         <p class="description">Create lesson plans, explain concepts, and engage every student.</p>
-      </article>
-      <article class="card">
+      </a>
+      <a class="card" href="dashboard.html?role=consultants">
         <div class="icon-wrap lavender"><i data-lucide="user-round" aria-hidden="true"></i></div>
         <h2>Consultants</h2><span class="rule" aria-hidden="true"></span>
         <p class="description">Unlock Cream's potential for your unique role and industry.</p>
-      </article>
-      <article class="card">
+      </a>
+      <a class="card" href="dashboard.html?role=real-estate">
         <div class="icon-wrap sage"><i data-lucide="house" aria-hidden="true"></i></div>
         <h2>Real Estate Agents</h2><span class="rule" aria-hidden="true"></span>
         <p class="description">Learn once. Apply everywhere. Grow with Cream.</p>
-      </article>
+      </a>
     </section>
     <footer>Designed with care · myUI</footer>
   </main>
