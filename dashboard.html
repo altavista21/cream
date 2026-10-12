@@ -43,7 +43,7 @@ const roleData={
 };
 const params=new URLSearchParams(location.search);
 const role=params.get("role");
-const d=roleData[role];
+let d=roleData[role];
 const $=id=>document.getElementById(id);
 const dbName="cream-workspace-db";
 let db, editingId=null, toastTimer;
@@ -62,8 +62,43 @@ async function saveRecord(event){event.preventDefault();const title=$("record-ti
 async function toggleRecord(id,done){const item=(await getAll()).find(r=>r.id===id);if(!item)return;item.done=done;item.updatedAt=Date.now();await transaction("readwrite",s=>s.put(item));await refresh();showToast(done?"Ditandai selesai.":"Status pekerjaan diperbarui.");}
 async function deleteRecord(id){const item=(await getAll()).find(r=>r.id===id);if(!item)return;if(!confirm('Hapus pekerjaan "'+item.title+'"? Tindakan ini tidak bisa dibatalkan.'))return;await transaction("readwrite",s=>s.delete(id));await refresh();showToast("Pekerjaan dihapus.");}
 async function exportData(){const items=await getAll();const blob=new Blob([JSON.stringify({app:"Cream",version:1,exportedAt:new Date().toISOString(),role,records:items},null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="cream-"+role+"-backup.json";a.click();URL.revokeObjectURL(url);showToast("Cadangan berhasil disiapkan.");}
-async function importData(file){if(!file)return;try{if(file.size>2*1024*1024)throw new Error("Ukuran file maksimal 2 MB.");const parsed=JSON.parse(await file.text());const records=Array.isArray(parsed)?parsed:parsed.records;if(!Array.isArray(records))throw new Error("Format file tidak berisi daftar catatan.");if(records.length>1000)throw new Error("Maksimal 1.000 catatan per impor.");const valid=records.filter(r=>r&&typeof r.title==="string"&&r.title.trim()).map(r=>({role,title:r.title.trim().slice(0,140),description:typeof r.description==="string"?r.description.slice(0,5000):"",dueDate:typeof r.dueDate==="string"&&/^\\d{4}-\\d{2}-\\d{2}$/.test(r.dueDate)?r.dueDate:"",category:d.categories.includes(r.category)?r.category:"Umum",done:r.done===true,createdAt:Number.isFinite(Number(r.createdAt))&&Number(r.createdAt)>0?Number(r.createdAt):Date.now(),updatedAt:Date.now()}));if(!valid.length)throw new Error("Tidak ada catatan valid untuk diimpor.");if(!confirm("Impor "+valid.length+" catatan ke dashboard "+d.title+"? Data yang ada tidak akan dihapus."))return;await transaction("readwrite",s=>valid.forEach(r=>s.add(r)));await refresh();showToast(valid.length+" catatan berhasil diimpor.");}catch(e){showToast("Impor gagal: "+e.message);}finally{$("import-file").value="";}}
+async function importData(file){if(!file)return;try{if(file.size>2*1024*1024)throw new Error("Ukuran file maksimal 2 MB.");const parsed=JSON.parse(await file.text());const records=Array.isArray(parsed)?parsed:parsed.records;if(!Array.isArray(records))throw new Error("Format file tidak berisi daftar catatan.");if(records.length>1000)throw new Error("Maksimal 1.000 catatan per impor.");const valid=records.filter(r=>r&&typeof r.title==="string"&&r.title.trim()).map(r=>({role,title:r.title.trim().slice(0,140),description:typeof r.description==="string"?r.description.slice(0,5000):"",dueDate:typeof r.dueDate==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(r.dueDate)?r.dueDate:"",category:d.categories.includes(r.category)?r.category:"Umum",done:r.done===true,createdAt:Number.isFinite(Number(r.createdAt))&&Number(r.createdAt)>0?Number(r.createdAt):Date.now(),updatedAt:Date.now()}));if(!valid.length)throw new Error("Tidak ada catatan valid untuk diimpor.");if(!confirm("Impor "+valid.length+" catatan ke dashboard "+d.title+"? Data yang ada tidak akan dihapus."))return;await transaction("readwrite",s=>valid.forEach(r=>s.add(r)));await refresh();showToast(valid.length+" catatan berhasil diimpor.");}catch(e){showToast("Impor gagal: "+e.message);}finally{$("import-file").value="";}}
 function init(){if(!d){$("title").textContent="Profesi tidak ditemukan";$("lead").textContent="Pilih salah satu profesi dari halaman utama.";return;}document.title=d.title+" | Cream";$("title").textContent=d.title;$("lead").textContent=d.lead;$("role-label").textContent=d.title;$("work-title").textContent=d.work;$("work-sub").textContent="Catat pekerjaan nyata, simpan perubahan, lalu pantau progres dari daftar ini.";$("note").textContent=d.note;$("quick").innerHTML=d.quick.map((q,i)=>'<button type="button" data-quick="'+i+'"><i data-lucide="'+q[0]+'"></i><span>'+esc(q[1])+'</span></button>').join("");if(window.lucide)lucide.createIcons();
 $("add-btn").addEventListener("click",()=>showEditor());$("quick").addEventListener("click",e=>{const b=e.target.closest("[data-quick]");if(!b)return;const q=d.quick[Number(b.dataset.quick)];showEditor(null,{title:q[1],category:q[2],description:"Tujuan:\nLangkah berikutnya:\nCatatan:"});});$("record-form").addEventListener("submit",saveRecord);$("close-dialog").addEventListener("click",()=>$("editor").close());$("cancel-btn").addEventListener("click",()=>$("editor").close());$("search").addEventListener("input",refresh);$("filter").addEventListener("change",refresh);$("records").addEventListener("change",async e=>{const el=e.target.closest('[data-action="toggle"]');if(el)try{await toggleRecord(Number(el.dataset.id),el.checked);}catch(err){showToast("Gagal mengubah status: "+err.message);}});$("records").addEventListener("click",async e=>{const b=e.target.closest("[data-action]");if(!b)return;const id=Number(b.dataset.id);try{if(b.dataset.action==="delete")await deleteRecord(id);if(b.dataset.action==="edit"){const item=(await getAll()).find(r=>r.id===id);if(item)showEditor(item);}}catch(err){showToast("Operasi gagal: "+err.message);}});$("export-btn").addEventListener("click",()=>exportData().catch(e=>showToast("Ekspor gagal: "+e.message)));$("import-btn").addEventListener("click",()=>$("import-file").click());$("import-file").addEventListener("change",e=>importData(e.target.files[0]));openDatabase().then(async database=>{db=database;await refresh();}).catch(e=>{showToast("Database tidak dapat dibuka. Pastikan browser mendukung IndexedDB.");console.error(e);});}
-init();
+async function initFromSupabase(){
+  if(!d){init();return;}
+  let settings=null;
+  try{
+    if(window.supabase){
+      const client=window.supabase.createClient("https://iavnrurnfgdhmfuticyv.supabase.co","sb_publishable_6slueVLEm5z2mHtbw3fr-w_43hqFNDQ");
+      const {data,error}=await client.from("profession_settings").select("title,active,dashboard_config").eq("slug",role).maybeSingle();
+      if(!error&&data)settings=data;
+      else if(error)console.warn("Pengaturan dashboard memakai konfigurasi bawaan.",error.message);
+    }
+  }catch(error){console.warn("Pengaturan dashboard memakai konfigurasi bawaan.",error);}
+  if(settings&&settings.active===false){
+    document.title="Profesi tidak aktif | Cream";
+    $("title").textContent="Profesi tidak aktif";
+    $("lead").textContent="Profesi ini sedang dinonaktifkan oleh admin. Kembali ke halaman utama untuk memilih profesi yang tersedia.";
+    $("role-label").textContent="Tidak tersedia";
+    document.querySelector(".stats").classList.add("hidden");
+    document.querySelector(".columns").classList.add("hidden");
+    if(window.lucide)lucide.createIcons();
+    return;
+  }
+  if(settings){
+    const c=settings.dashboard_config||{};
+    d={
+      ...d,
+      title:settings.title||d.title,
+      lead:typeof c.lead==="string"?c.lead:d.lead,
+      work:typeof c.work==="string"?c.work:d.work,
+      note:typeof c.note==="string"?c.note:d.note,
+      categories:Array.isArray(c.categories)&&c.categories.length?c.categories:d.categories,
+      quick:Array.isArray(c.quick)&&c.quick.length?c.quick:d.quick
+    };
+  }
+  init();
+}
+initFromSupabase().catch(error=>{console.error("Cream dashboard gagal diinisialisasi.",error);init();});
 </script></body></html>
